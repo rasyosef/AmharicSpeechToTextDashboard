@@ -42,7 +42,7 @@ def perform_predictions(path):
     from scripts.new_model import LogMelgramLayer, CTCLayer
 
     def load_model():
-        model = tf.keras.models.load_model('./models/new_model_v1_2000.h5', 
+        model = tf.keras.models.load_model('./models/new_model_v1_6000.h5', 
                                             custom_objects = {
                                                 'LogMelgramLayer': LogMelgramLayer ,
                                                 'CTCLayer': CTCLayer}

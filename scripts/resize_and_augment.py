@@ -57,7 +57,7 @@ def equalize_transcript_dimension(mfccs, encoded_transcripts, truncate_len):
   Make all transcripts have equal number of characters by padding the the short
   ones with spaces
   """
-  max_len = max([len(encoded_transcripts[trans]) for trans in mfccs])
+  max_len = 120 #max([len(encoded_transcripts[trans]) for trans in mfccs])
   print("maximum number of characters in a transcript:", max_len)
   new_trans = {}
   for trans in mfccs:

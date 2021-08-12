@@ -62,7 +62,7 @@ def main():
 
         st.subheader('Upload the audio you want to perform predictions on')
 
-        wav_file =  st.file_uploader("Upload Data", type = ['wav'])
+        wav_file =  st.file_uploader("Upload Data", type = ['wav', 'm4a'])
         if wav_file is not None:
             st.write('Prediction: ')
             
@@ -76,6 +76,30 @@ def main():
             st.subheader('Your Audio')
             st.audio(create_audio_player(audios[0], 44100))
             st.write('Prediction: '+ predictions[0])
-    
+
+        # from IPython.display import Audio
+        # from ipywebrtc import CameraStream, AudioRecorder
+
+        # actually I found this hack in some js code
+        # just pass mime type =)
+        # 
+        import sounddevice as sd
+        import wavio
+        def record(duration=3, fs=48000):
+            sd.default.samplerate = fs
+            sd.default.channels = 1
+            myrecording = sd.rec(int(duration * fs))
+            sd.wait(duration)
+            return myrecording
+        st.subheader('Record a 5 second audio and perform prediction')
+        if st.button(f"Click to Record"):
+            myrecording = record()
+            wavio.write('./data/pred/tr_10001_tr097083.wav', myrecording, 48000, sampwidth=2)
+            st.write("recording complete")
+            audios, predictions, transcripts = perform_predictions('./data/pred/')
+            st.subheader('Your Audio')
+            st.audio(create_audio_player(audios[0], 44100))
+            st.write('Prediction: '+ predictions[0])
+        #recorder.save('./data/pred/tr_10001_tr097083.wav')
 if __name__ == "__main__":
     main()
