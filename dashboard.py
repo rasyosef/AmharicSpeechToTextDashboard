@@ -4,6 +4,7 @@ import numpy as np
 import base64
 import pickle
 import io
+import logging
 from scipy.io import wavfile
 from scripts.test_model import perform_predictions
 from pydub import AudioSegment
@@ -38,6 +39,8 @@ def main():
         Our responsibility was to build a deep learning model that is capable of transcribing a speech to text in the 
         Amharic language. The model we produce will be accurate and is robust against background noise.''')
 
+        logging.info("Homepage loaded")
+
     elif app_mode == 'Model Performance':
         st.write('''
         ## Here are a few audio Samples
@@ -57,6 +60,8 @@ def main():
         st.audio(create_audio_player(audios[2], 44100))
         st.write('Prediction: '+ predictions[2])
         st.write('Actual: '+ transcripts[2])
+        
+        logging.info("Performance page loaded")
 
     elif app_mode == 'Test Model':
 
@@ -101,5 +106,6 @@ def main():
             st.audio(create_audio_player(audios[0], 44100))
             st.write('Prediction: '+ predictions[0])
         #recorder.save('./data/pred/tr_10001_tr097083.wav')
+        logging.info("Mpdel Testing page loaded")
 if __name__ == "__main__":
     main()

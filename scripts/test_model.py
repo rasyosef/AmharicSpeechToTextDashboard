@@ -19,7 +19,7 @@ def perform_predictions(path):
     logging.info('loaded audio files')
 
     print("The longest audio is", maximum_length/sample_rate, 'seconds long')
-    print("max length", maximum_length)
+    #print("max length", maximum_length)
 
     demo_audio = list(audio_files.keys())[0]
 
@@ -27,29 +27,30 @@ def perform_predictions(path):
     logging.info('loaded transcripts')
 
     audio_files = resize_audios_mono(audio_files, 440295)
-    print("resized shape", audio_files[demo_audio].shape)
+    #print("resized shape", audio_files[demo_audio].shape)
 
     import pickle
     enc = open('./models/encoder.pkl', 'rb')
     char_encoder = pickle.load(enc)
 
     transcripts_encoded = encode_transcripts(transcripts, char_encoder)
-    enc_aug_transcripts = equalize_transcript_dimension(audio_files, transcripts_encoded, 200)
+    enc_aug_transcripts = equalize_transcript_dimension(audio_files, transcripts_encoded, 130)
 
-    print('model summary')
+    #print('model summary')
 
     import tensorflow as tf
     from scripts.new_model import LogMelgramLayer, CTCLayer
 
     def load_model():
-        model = tf.keras.models.load_model('./models/new_model_v1_6000.h5', 
+        model = tf.keras.models.load_model('./models/new_model_v1_8500.h5', 
                                             custom_objects = {
                                                 'LogMelgramLayer': LogMelgramLayer ,
                                                 'CTCLayer': CTCLayer}
                                             )
         return model
     model = load_model()
-    print(model.summary())
+    logging.info("Loaded Speech To Text Model")
+    #print(model.summary())
 
     def load_data(audio_files, encoded_transcripts):
         X_train = []
@@ -68,7 +69,7 @@ def perform_predictions(path):
     predicted = model.predict([X_test,y_test])
     predicted_trans = decode_predicted(predicted, char_encoder)
     real_trans = [''.join(char_encoder.inverse_transform(y)) for y in y_test]
-
+    logging.info("Computed predictions using the STT model")
     return X_test, predicted_trans, real_trans
 
 #print(perform_predictions('./data/')[1])

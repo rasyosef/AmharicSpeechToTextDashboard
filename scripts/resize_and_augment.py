@@ -1,5 +1,5 @@
 import numpy as np
-
+import logging
 def resize_audios_mono(audios : dict, max_length : int) -> dict:
   """
   Here we pad the sampled audio with zeros so tha all of the sampled audios 
@@ -17,6 +17,7 @@ def resize_audios_mono(audios : dict, max_length : int) -> dict:
     audios[name] = np.pad(audios[name], 
                           (0, max_length-len(audios[name])),
                           mode = 'constant')
+  logging.info("Resized all audios to a length of {}".format(max_length))
   return audios
 
 
@@ -36,6 +37,7 @@ def augment_audio(audios : dict, sample_rate : int) -> dict:
   """
   for name in audios:
     audios[name] = np.roll(audios[name], int(sample_rate/10))
+  logging.info("Augmented audio samples")
   return audios
 
 # def equalize_transcript_dimension(y, truncate_len):
@@ -57,11 +59,10 @@ def equalize_transcript_dimension(mfccs, encoded_transcripts, truncate_len):
   Make all transcripts have equal number of characters by padding the the short
   ones with spaces
   """
-  max_len = 120 #max([len(encoded_transcripts[trans]) for trans in mfccs])
-  print("maximum number of characters in a transcript:", max_len)
   new_trans = {}
   for trans in mfccs:
-    new_trans[trans] = np.pad(encoded_transcripts[trans], 
-                          (0, max_len-len(encoded_transcripts[trans])),
-                          mode = 'constant')[:truncate_len]
+    new_trans[trans] = np.pad(np.array(encoded_transcripts[trans][:truncate_len]), 
+                          (0, truncate_len-len(encoded_transcripts[trans])),
+                          mode = 'constant')
+  logging.info("Equalized the length of all transcripts to {}".format(truncate_len))
   return new_trans
